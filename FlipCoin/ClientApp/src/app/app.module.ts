@@ -9,11 +9,10 @@ import { MenubarComponent } from './menubar/menubar.component'
 
 // routable pages
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { StatsComponent } from './stats/stats.component';
 
 // sub components
-
+import { QueueComponent } from './home/queue/queue.component'
 
 // API stuff
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
@@ -24,9 +23,11 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
   declarations: [
     AppComponent,
     MenubarComponent,
+    // routable components
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent
+    StatsComponent,
+    // sub components
+    QueueComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

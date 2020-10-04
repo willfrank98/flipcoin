@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlipCoin.Data.Migrations
 {
-	[DbContext(typeof(ApplicationDbContext))]
+	[DbContext(typeof(DbContext))]
 	[Migration("00000000000000_CreateIdentitySchema")]
 	partial class CreateIdentitySchema
 	{
