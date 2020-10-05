@@ -1,6 +1,6 @@
 ﻿namespace FlipCoin.Models
 {
-	public class Queue
+	public class Queue : IModel
 	{
 		public int ID { get; set; }
 
@@ -8,5 +8,15 @@
 		public string UserId { get; set; }
 
 		public decimal Amount { get; set; }
+
+		public dynamic AsResult()
+		{
+			return new
+			{
+				id = ID,
+				userId = UserId,
+				amount = Amount
+			};
+		}
 	}
 }

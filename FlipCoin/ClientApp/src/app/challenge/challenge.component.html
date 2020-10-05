@@ -1,0 +1,15 @@
+<div class="footer">
+  <button (click)="refresh()">refresh</button>
+
+  <div *ngIf="incomingChallenge">
+    you have a challenge!
+    <button (click)="accept()">Accept</button>
+    <button (click)="reject()">Reject</button>
+  </div>
+
+  <div *ngIf="outgoingChallenge">
+    Your challenge: waiting...
+  </div>
+</div>
+
+

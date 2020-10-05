@@ -29,10 +29,54 @@ namespace FlipCoin.Services
 			{
 				Challenger = currentUser,
 				Challengee = queueItem.User,
-				QueueItem = queueItem
+				QueueItem = queueItem,
+				InProgress = false
 			};
 
 			await _context.AddAsync(challenge);
+			await _context.SaveChangesAsync();
+
+			var result = new
+			{
+				success = true
+			};
+
+			return result;
+		}
+
+		public async Task<dynamic> CheckChallenges()
+		{
+			var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+			var incomingChallenge = await _context.Challenges
+				.Include(x => x.Challenger)
+				.FirstOrDefaultAsync(x => x.ChallengeeId == userId);
+
+			var outgoingChallenge = await _context.Challenges
+				.Include(x => x.Challenger)
+				.FirstOrDefaultAsync(x => x.ChallengerId == userId);
+
+			var result = new
+			{
+				success = true,
+				incomingChallenge = incomingChallenge?.AsResult(),
+				outgoingChallenge = outgoingChallenge?.AsResult()
+			};
+
+			return result;
+		}
+
+		public async Task<dynamic> AcceptChallenge(int id)
+		{
+			// TODO: check user accepting challenge
+
+			var challenge = await _context.Challenges
+				//.Include(x => x.Challenger)
+				.FirstOrDefaultAsync(x => x.ID == id);
+
+			challenge.InProgress = true;
+
+			_context.Update(challenge);
 			await _context.SaveChangesAsync();
 
 			var result = new

@@ -1,6 +1,6 @@
 ﻿namespace FlipCoin.Models
 {
-	public class Challenge
+	public class Challenge : IModel
 	{
 		public int ID { get; set; }
 
@@ -12,5 +12,16 @@
 
 		public Queue QueueItem { get; set; }
 		public int QueueItemId { get; set; }
+
+		public bool InProgress { get; set; }
+
+		public dynamic AsResult()
+		{
+			return new
+			{
+				id = ID,
+				challenger = Challenger.AsResult()
+			};
+		}
 	}
 }

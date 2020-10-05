@@ -18,10 +18,28 @@ namespace FlipCoin.Controllers
 		}
 
 		[Authorize]
-		[HttpPost("add/{queueItemId:int}")]
+		[HttpGet("add/{queueItemId:int}")]
 		public async Task<IActionResult> NewChallenge(int queueItemId)
 		{
 			var result = await _challengeService.NewChallenge(queueItemId);
+
+			return Json(result);
+		}
+
+		[Authorize]
+		[HttpGet("get")]
+		public async Task<IActionResult> CheckChallenges()
+		{
+			var result = await _challengeService.CheckChallenges();
+
+			return Json(result);
+		}
+
+		[Authorize]
+		[HttpGet("accept/{challengeId:int}")]
+		public async Task<IActionResult> AcceptChallenge(int challengeId)
+		{
+			var result = await _challengeService.AcceptChallenge(challengeId);
 
 			return Json(result);
 		}

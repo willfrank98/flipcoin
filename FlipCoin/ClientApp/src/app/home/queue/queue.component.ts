@@ -53,6 +53,8 @@ export class QueueComponent implements OnInit {
   }
 
   challenge(id: number): void {
+    this._httpClient.get(this._baseUrl + 'challenge/add/' + id).subscribe(result => {
 
+    }, error => console.error(error));
   }
 }
