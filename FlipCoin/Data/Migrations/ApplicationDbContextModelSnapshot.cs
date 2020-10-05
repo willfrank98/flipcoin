@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlipCoin.Data.Migrations
 {
-    [DbContext(typeof(DbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -82,6 +82,33 @@ namespace FlipCoin.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("FlipCoin.Models.Challenge", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ChallengeeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ChallengerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("QueueItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChallengeeId");
+
+                    b.HasIndex("ChallengerId");
+
+                    b.HasIndex("QueueItemId");
+
+                    b.ToTable("Challenges");
                 });
 
             modelBuilder.Entity("FlipCoin.Models.Queue", b =>
@@ -319,6 +346,23 @@ namespace FlipCoin.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("FlipCoin.Models.Challenge", b =>
+                {
+                    b.HasOne("FlipCoin.Models.ApplicationUser", "Challengee")
+                        .WithMany()
+                        .HasForeignKey("ChallengeeId");
+
+                    b.HasOne("FlipCoin.Models.ApplicationUser", "Challenger")
+                        .WithMany()
+                        .HasForeignKey("ChallengerId");
+
+                    b.HasOne("FlipCoin.Models.Queue", "QueueItem")
+                        .WithMany()
+                        .HasForeignKey("QueueItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FlipCoin.Models.Queue", b =>

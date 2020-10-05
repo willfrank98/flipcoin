@@ -46,6 +46,7 @@ namespace FlipCoin
 			});
 
 			services
+				.AddScoped<ChallengeService>()
 				.AddScoped<UserService>()
 				.AddScoped<QueueService>();
 		}

@@ -3,10 +3,6 @@ using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FlipCoin.Data
 {
@@ -19,5 +15,6 @@ namespace FlipCoin.Data
 		}
 
 		public DbSet<Queue> Queues { get; set; }
+		public DbSet<Challenge> Challenges { get; set; }
 	}
 }
