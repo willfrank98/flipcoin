@@ -15,12 +15,16 @@
 
 		public bool InProgress { get; set; }
 
+		public double? Result { get; set; }
+
 		public dynamic AsResult()
 		{
 			return new
 			{
 				id = ID,
-				challenger = Challenger.AsResult()
+				challenger = Challenger.AsResult(),
+				inProgress = InProgress,
+				result = Result
 			};
 		}
 	}

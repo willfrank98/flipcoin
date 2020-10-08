@@ -27,7 +27,7 @@ namespace FlipCoin.Controllers
 		}
 
 		[Authorize]
-		[HttpGet("get")]
+		[HttpGet("check")]
 		public async Task<IActionResult> CheckChallenges()
 		{
 			var result = await _challengeService.CheckChallenges();

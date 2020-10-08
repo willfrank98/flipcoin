@@ -1,1 +1,63 @@
-<queue [user]="user"></queue>
+<!--<queue [user]="user"></queue>
+<coin></coin>-->
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Amount</th>
+      <th>
+        <a (click)='getQueue()'>
+          <i class="fas fa-sync-alt"></i>
+        </a>
+      </th>
+    </tr>
+  </thead>
+  <tfoot>
+    <ng-container *ngFor="let item of queueItems">
+      <tr [class.is-selected]="item.userId === user?.id">
+        <td>{{item.userName}}</td>
+        <td>{{item.amount}}</td>
+        <td *ngIf="item.userId !== user?.id">
+          <button (click)="challenge(item.id)" class="button is-small">
+            Challenge
+          </button>
+        </td>
+        <td *ngIf="item.userId === user?.id">
+          <button (click)="deleteQueueItem(item.id)" class="button is-small is-danger">
+            <i class="fas fa-times"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+  </tfoot>
+</table>
+
+<input type="number" [(ngModel)]="newAmount">
+<button (click)="addQueueItem()" class="button is-link">
+  <i class="fas fa-plus"></i>
+</button>
+
+<div>
+  Coin result: <span *ngIf="coinResult">{{coinResult}}</span>
+</div>
+
+<div class="footer">
+  <button (click)="refreshChallenges()">refresh</button>
+
+  <div *ngIf="incomingChallenge">
+    you have a challenge!
+    <button (click)="acceptChallenge()">Accept</button>
+    <button (click)="rejectChallenge()">Reject</button>
+  </div>
+
+  <div *ngIf="outgoingChallenge">
+    Your challenge:
+    <span *ngIf="!outgoigChallenge?.inProgress">
+      waiting...
+    </span>
+    <span *ngIf="outgoigChallenge?.inProgress">
+      Accepted!
+    </span>
+  </div>
+</div>

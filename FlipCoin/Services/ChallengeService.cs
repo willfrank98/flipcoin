@@ -2,6 +2,7 @@
 using FlipCoin.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace FlipCoin.Services
 				Challenger = currentUser,
 				Challengee = queueItem.User,
 				QueueItem = queueItem,
-				InProgress = false
+				InProgress = true
 			};
 
 			await _context.AddAsync(challenge);
@@ -38,7 +39,8 @@ namespace FlipCoin.Services
 
 			var result = new
 			{
-				success = true
+				success = true,
+				challenge = challenge.AsResult()
 			};
 
 			return result;
@@ -50,7 +52,7 @@ namespace FlipCoin.Services
 
 			var incomingChallenge = await _context.Challenges
 				.Include(x => x.Challenger)
-				.FirstOrDefaultAsync(x => x.ChallengeeId == userId);
+				.FirstOrDefaultAsync(x => x.ChallengeeId == userId && x.InProgress);
 
 			var outgoingChallenge = await _context.Challenges
 				.Include(x => x.Challenger)
@@ -71,17 +73,26 @@ namespace FlipCoin.Services
 			// TODO: check user accepting challenge
 
 			var challenge = await _context.Challenges
-				//.Include(x => x.Challenger)
+				.Include(x => x.Challenger)
 				.FirstOrDefaultAsync(x => x.ID == id);
 
-			challenge.InProgress = true;
+			var rand = new Random();
+			double challengeResult = 0.0;
+			while (challengeResult == 0.0)
+			{
+				challengeResult = rand.NextDouble();
+			}
+
+			challenge.Result = challengeResult;
+			challenge.InProgress = false;
 
 			_context.Update(challenge);
 			await _context.SaveChangesAsync();
 
 			var result = new
 			{
-				success = true
+				success = true,
+				challenge = challenge.AsResult()
 			};
 
 			return result;

@@ -8,7 +8,13 @@
   </div>
 
   <div *ngIf="outgoingChallenge">
-    Your challenge: waiting...
+    Your challenge:
+    <span *ngIf="!outgoigChallenge?.inProgress">
+      waiting...
+    </span>
+    <span *ngIf="!outgoigChallenge?.inProgress">
+      Accepted!
+    </span>
   </div>
 </div>
 

@@ -14,7 +14,8 @@ import { HomeComponent } from './home/home.component';
 import { StatsComponent } from './stats/stats.component';
 
 // sub components
-import { QueueComponent } from './home/queue/queue.component'
+import { CoinComponent } from './home/coin/coin.component';
+import { QueueComponent } from './home/queue/queue.component';
 
 // API stuff
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
@@ -31,6 +32,7 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
     HomeComponent,
     StatsComponent,
     // sub components
+    CoinComponent,
     QueueComponent
   ],
   imports: [

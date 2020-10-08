@@ -1,8 +1,6 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-//import { QueueService } from './queue.service';
-
 @Component({
   selector: 'queue',
   templateUrl: './queue.component.html'
@@ -54,7 +52,6 @@ export class QueueComponent implements OnInit {
 
   challenge(id: number): void {
     this._httpClient.get(this._baseUrl + 'challenge/add/' + id).subscribe(result => {
-
     }, error => console.error(error));
   }
 }
