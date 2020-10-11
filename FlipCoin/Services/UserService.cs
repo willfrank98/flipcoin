@@ -24,8 +24,8 @@ namespace FlipCoin.Services
 
 			var result = new
 			{
-				id = user.Id,
-				userName = user.UserName
+				success = true,
+				user = user.AsResult()
 			};
 
 			return result;

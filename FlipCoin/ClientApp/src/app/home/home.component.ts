@@ -9,24 +9,22 @@ export class HomeComponent implements OnInit {
   user: any;
 
   queueItems: any;
-  newAmount: string;
+  newAmount: number;
+  queueRefresh: any;
 
   incomingChallenge: any;
   outgoingChallenge: any;
+  challengeRefresh: any;
 
   coinResult: number;
 
-  private readonly _httpClient: HttpClient;
-  private readonly _baseUrl: string;
-  constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    this._httpClient = httpClient;
-    this._baseUrl = baseUrl;
-  }
+  constructor(private readonly httpClient: HttpClient,
+    @Inject('BASE_URL') private readonly baseUrl: string) {}
 
   ngOnInit(): void {
     // get user
-    this._httpClient.get(this._baseUrl + 'user/get').subscribe(result => {
-      this.user = result;
+    this.httpClient.get(this.baseUrl + 'user/get').subscribe(result => {
+      this.user = result['user'];
     }, error => {
       // eat un-auth errors
       if (error.status !== 401) {
@@ -37,34 +35,42 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    // get queue
-    this.getQueue();
-
-    // get challenges
-    this.refreshChallenges();
+    // set queue refresh timer
+    this.queueRefresh = setInterval(() => {
+      this.getQueue();
+    }, 1000);
   }
 
   getQueue(): void {
-    this._httpClient.get(this._baseUrl + 'queue/get').subscribe(result => {
+    this.httpClient.get(this.baseUrl + 'queue/get').subscribe(result => {
       this.queueItems = result;
     }, error => console.error(error));
   }
 
   addQueueItem(): void {
+    if (this.newAmount > this.user.balance) {
+      return;
+    }
+
     const model = {
       userId: this.user.id,
       amount: this.newAmount
     }
 
-    this._httpClient.post(this._baseUrl + 'queue/add', model).subscribe(result => {
+    this.httpClient.post(this.baseUrl + 'queue/add', model).subscribe(result => {
       this.queueItems = result;
 
       this.getQueue();
+
+      // set challenges refresh rate
+      //this.challengeRefresh = setInterval(() => {
+      //  this.refreshChallenges();
+      //}, 500);
     }, error => console.error(error));
   }
 
   deleteQueueItem(id: number): void {
-    this._httpClient.get(this._baseUrl + 'queue/remove/' + id).subscribe(result => {
+    this.httpClient.get(this.baseUrl + 'queue/remove/' + id).subscribe(result => {
       console.log(result);
 
       this.getQueue();
@@ -72,25 +78,33 @@ export class HomeComponent implements OnInit {
   }
 
   challenge(id: number): void {
-    this._httpClient.get(this._baseUrl + 'challenge/add/' + id).subscribe(result => {
+    this.httpClient.get(this.baseUrl + 'challenge/add/' + id).subscribe(result => {
       this.outgoingChallenge = result['challenge'];
+
+      // faster refresh rate to check for challenge accept
+      //clearInterval(this.challengeRefresh);
+      //this.challengeRefresh = setInterval(() => {
+      //  this.refreshChallenges();
+      //}, 100);
     }, error => console.error(error));
   }
 
   refreshChallenges(): void {
-    this._httpClient.get(this._baseUrl + 'challenge/check').subscribe(result => {
+    this.httpClient.get(this.baseUrl + 'challenge/check').subscribe(result => {
       this.incomingChallenge = result['incomingChallenge'];
       this.outgoingChallenge = result['outgoingChallenge'];
 
-      if (!this.outgoingChallenge.inProgress) {
+      if (this.outgoingChallenge && this.outgoingChallenge.result) {
         this.coinResult = this.outgoingChallenge.result;
+
+        clearInterval(this.challengeRefresh);
       }
 
     }, error => console.error(error));
   }
 
   acceptChallenge(): void {
-    this._httpClient.get(this._baseUrl + 'challenge/accept/' + this.incomingChallenge.id).subscribe(result => {
+    this.httpClient.get(this.baseUrl + 'challenge/accept/' + this.incomingChallenge.id).subscribe(result => {
       this.coinResult = result['challenge'].result;
     }, error => console.error(error));
   }

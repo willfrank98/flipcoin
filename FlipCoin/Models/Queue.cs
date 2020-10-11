@@ -14,7 +14,8 @@
 			return new
 			{
 				id = ID,
-				userId = UserId,
+				userName = User.UserName,
+				userId = User.Id,
 				amount = Amount
 			};
 		}

@@ -19,7 +19,7 @@
         <td>{{item.userName}}</td>
         <td>{{item.amount}}</td>
         <td *ngIf="item.userId !== user?.id">
-          <button (click)="challenge(item.id)" class="button is-small">
+          <button (click)="challenge(item.id)" class="button is-small" [disabled]="item.amount > user.balance">
             Challenge
           </button>
         </td>
@@ -33,10 +33,16 @@
   </tfoot>
 </table>
 
-<input type="number" [(ngModel)]="newAmount">
-<button (click)="addQueueItem()" class="button is-link">
-  <i class="fas fa-plus"></i>
-</button>
+<div>
+  <input type="number" [(ngModel)]="newAmount">
+  <div *ngIf="newAmount > user?.balance" class="has-text-danger">
+    Insufficient Balance
+  </div>
+
+  <button (click)="addQueueItem()" [disabled]="newAmount > user?.balance" class="button is-link">
+    <i class="fas fa-plus"></i>
+  </button>
+</div>
 
 <div>
   Coin result: <span *ngIf="coinResult">{{coinResult}}</span>
@@ -53,10 +59,10 @@
 
   <div *ngIf="outgoingChallenge">
     Your challenge:
-    <span *ngIf="!outgoigChallenge?.inProgress">
+    <span *ngIf="outgoingChallenge?.inProgress">
       waiting...
     </span>
-    <span *ngIf="outgoigChallenge?.inProgress">
+    <span *ngIf="!outgoingChallenge?.inProgress">
       Accepted!
     </span>
   </div>

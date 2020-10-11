@@ -1,4 +1,5 @@
 <div class="navbar-item" *ngIf="isAuthenticated | async">
+  <span class="mr-1">Balance: ${{ userBalance }}</span>
   <a  class="navbar-item" [routerLink]='["/authentication/profile"]' title="Manage">Hello {{ userName | async }}</a>
   <a  class="navbar-item" [routerLink]='["/authentication/logout"]' [state]='{ local: true }' title="Logout">Logout</a>
 </div>

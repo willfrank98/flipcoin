@@ -28,13 +28,7 @@ namespace FlipCoin.Services
 
 			foreach (var item in queueItems)
 			{
-				result.Add(new
-				{
-					id = item.ID,
-					userName = item.User.UserName,
-					userId = item.User.Id,
-					amount = item.Amount
-				});
+				result.Add(item.AsResult());
 			}
 
 			return result;
@@ -42,12 +36,21 @@ namespace FlipCoin.Services
 
 		public async Task<dynamic> AddQueueItem(Queue item)
 		{
-			await _context.AddAsync(item);
-			await _context.SaveChangesAsync();
+			var userId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			var currentUser = await _context.Users.FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+			if (currentUser.Balance >= item.Amount)
+			{
+				currentUser.Balance -= item.Amount;
+
+				_context.Update(currentUser);
+				await _context.AddAsync(item);
+				await _context.SaveChangesAsync();
+			}
 
 			var result = new
 			{
-				success = true
+				success = currentUser.Balance >= item.Amount
 			};
 
 			return result;
@@ -56,28 +59,25 @@ namespace FlipCoin.Services
 		public async Task<dynamic> RemoveQueueItem(int id)
 		{
 			var currentUserId = _httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+			var currentUser = await _context.Users.FirstOrDefaultAsync(x => x.Id.Equals(currentUserId));
 
 			var item = await _context.Queues.FirstOrDefaultAsync(x => x.ID == id && x.UserId == currentUserId);
 
 			dynamic result;
 			if (item != null)
 			{
+				currentUser.Balance += item.Amount;
+
+				_context.Update(currentUser);
 				_context.Remove(item);
 				await _context.SaveChangesAsync();
+			}
 
-				result = new
-				{
-					success = true
-				};
-			}
-			else
+			result = new
 			{
-				result = new
-				{
-					success = false
-				};
-			}
-			
+				success = item != null
+			};
+
 			return result;
 		}
 	}

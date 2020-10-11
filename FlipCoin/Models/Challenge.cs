@@ -17,6 +17,8 @@
 
 		public double? Result { get; set; }
 
+		public bool Seen { get; set; }
+
 		public dynamic AsResult()
 		{
 			return new
