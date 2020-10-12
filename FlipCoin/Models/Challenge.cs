@@ -11,7 +11,7 @@
 		public string ChallengeeId { get; set; }
 
 		public Queue QueueItem { get; set; }
-		public int QueueItemId { get; set; }
+		public int? QueueItemId { get; set; }
 
 		public bool InProgress { get; set; }
 

@@ -62,7 +62,14 @@ namespace FlipCoin.Services
 
 			var outgoingChallenge = await _context.Challenges
 				.Include(x => x.Challenger)
-				.FirstOrDefaultAsync(x => x.ChallengerId == userId);
+				.FirstOrDefaultAsync(x => x.ChallengerId == userId && !x.Seen);
+
+			if (outgoingChallenge != null && outgoingChallenge.Result != null)
+			{
+				outgoingChallenge.Seen = true;
+				_context.Update(outgoingChallenge);
+				await _context.SaveChangesAsync();
+			}
 
 			var result = new
 			{
@@ -105,12 +112,6 @@ namespace FlipCoin.Services
 
 			_context.Update(challenge);
 
-			// remove associated queue item
-			var item = await _context.Queues
-				.FirstOrDefaultAsync(x => x.UserId == challenge.ChallengeeId);
-
-			_context.Remove(item);
-
 			// update balances
 			var amount = challenge.QueueItem.Amount;
 
@@ -125,6 +126,12 @@ namespace FlipCoin.Services
 
 			_context.Update(challenge.Challenger);
 			_context.Update(challenge.Challengee);
+
+			// remove associated queue item
+			var item = await _context.Queues
+				.FirstOrDefaultAsync(x => x.UserId == challenge.ChallengeeId);
+
+			_context.Remove(item);
 
 			// save changes
 			await _context.SaveChangesAsync();

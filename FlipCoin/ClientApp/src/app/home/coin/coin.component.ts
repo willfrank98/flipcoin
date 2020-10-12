@@ -1,5 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { Winwheel } from 'winwheel';
 
 //import { QueueService } from './queue.service';
 
@@ -8,29 +10,25 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './coin.component.html'
 })
 export class CoinComponent implements OnInit {
-  incomingChallenge: any;
-  outgoingChallenge: any;
+  @Input()
+  result: number;
 
-  private readonly _httpClient: HttpClient;
-  private readonly _baseUrl: string;
-  constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    this._httpClient = httpClient;
-    this._baseUrl = baseUrl;
-  }
+  private wheel: Winwheel;
+
+  constructor(private readonly _httpClient: HttpClient,
+    private readonly _baseUrl: string) { }
 
   ngOnInit(): void {
+    this.wheel = new Winwheel({
+      'outerRadius': 200,
+      'textFontSize': 24,
+      'textOrientation': 'vertical',
+      'textAlignment': 'outer',
+      'numSegments': 2,
+      'segments': [
+        { 'fillStyle': 'red', 'text': 'red' },
+        { 'fillStyle': 'blue', 'text': 'blue' }
+      ]
+    })
   }
-
-  //refresh(): void {
-  //  this._httpClient.get(this._baseUrl + 'challenge/get').subscribe(result => {
-  //    this.incomingChallenge = result['incomingChallenge'];
-  //    this.outgoingChallenge = result['outgoingChallenge'];
-  //  }, error => console.error(error));
-  //}
-
-  //accept(): void {
-  //  this._httpClient.get(this._baseUrl + 'challenge/accept/' + this.incomingChallenge.id).subscribe(result => {
-
-  //  }, error => console.error(error));
-  //}
 }

@@ -6,6 +6,12 @@ namespace FlipCoin.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "Balance",
+                table: "AspNetUsers",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "Queues",
                 columns: table => new
@@ -13,7 +19,7 @@ namespace FlipCoin.Data.Migrations
                     ID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(nullable: true),
-                    Amount = table.Column<decimal>(nullable: false)
+                    Amount = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,7 +40,10 @@ namespace FlipCoin.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ChallengerId = table.Column<string>(nullable: true),
                     ChallengeeId = table.Column<string>(nullable: true),
-                    QueueItemId = table.Column<int>(nullable: false)
+                    QueueItemId = table.Column<int>(nullable: true),
+                    InProgress = table.Column<bool>(nullable: false),
+                    Result = table.Column<double>(nullable: true),
+                    Seen = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,7 +65,7 @@ namespace FlipCoin.Data.Migrations
                         column: x => x.QueueItemId,
                         principalTable: "Queues",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
@@ -87,6 +96,10 @@ namespace FlipCoin.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Queues");
+
+            migrationBuilder.DropColumn(
+                name: "Balance",
+                table: "AspNetUsers");
         }
     }
 }

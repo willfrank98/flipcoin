@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlipCoin.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201005035552_challenge-ip")]
-    partial class challengeip
+    [Migration("20201011020735_models")]
+    partial class models
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,9 @@ namespace FlipCoin.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Balance")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -105,6 +108,12 @@ namespace FlipCoin.Data.Migrations
                     b.Property<int>("QueueItemId")
                         .HasColumnType("int");
 
+                    b.Property<double?>("Result")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("Seen")
+                        .HasColumnType("bit");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ChallengeeId");
@@ -123,8 +132,8 @@ namespace FlipCoin.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");

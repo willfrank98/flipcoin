@@ -19,7 +19,7 @@
         <td>{{item.userName}}</td>
         <td>{{item.amount}}</td>
         <td *ngIf="item.userId !== user?.id">
-          <button (click)="challenge(item.id)" class="button is-small" [disabled]="item.amount > user.balance">
+          <button (click)="challenge(item.id)" class="button is-small" [disabled]="item.amount > user.balance || item.id === challengeIndex">
             Challenge
           </button>
         </td>
@@ -44,13 +44,12 @@
   </button>
 </div>
 
-<div>
-  Coin result: <span *ngIf="coinResult">{{coinResult}}</span>
+<div *ngIf="coinResult">
+  <coin [result]="coinResult"></coin>
 </div>
 
-<div class="footer">
-  <button (click)="refreshChallenges()">refresh</button>
-
+<div class="footer" *ngIf="outgoingChallenge || incomingChallenge">
+  <!--<button (click)="refreshChallenges()">refresh</button>-->
   <div *ngIf="incomingChallenge">
     you have a challenge!
     <button (click)="acceptChallenge()">Accept</button>
@@ -58,12 +57,6 @@
   </div>
 
   <div *ngIf="outgoingChallenge">
-    Your challenge:
-    <span *ngIf="outgoingChallenge?.inProgress">
-      waiting...
-    </span>
-    <span *ngIf="!outgoingChallenge?.inProgress">
-      Accepted!
-    </span>
+    Waiting for {{otugoingChallenge.challengee.userName}} ...
   </div>
 </div>

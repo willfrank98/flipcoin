@@ -12,6 +12,7 @@ export class HomeComponent implements OnInit {
   newAmount: number;
   queueRefresh: any;
 
+  challengeIndex: number;
   incomingChallenge: any;
   outgoingChallenge: any;
   challengeRefresh: any;
@@ -22,7 +23,15 @@ export class HomeComponent implements OnInit {
     @Inject('BASE_URL') private readonly baseUrl: string) {}
 
   ngOnInit(): void {
-    // get user
+    this.getUser();    
+
+    // set queue refresh timer
+    this.queueRefresh = setInterval(() => {
+      this.getQueue();
+    }, 1000);
+  }
+
+  getUser(): void {
     this.httpClient.get(this.baseUrl + 'user/get').subscribe(result => {
       this.user = result['user'];
     }, error => {
@@ -34,11 +43,6 @@ export class HomeComponent implements OnInit {
         console.log(error);
       }
     });
-
-    // set queue refresh timer
-    this.queueRefresh = setInterval(() => {
-      this.getQueue();
-    }, 1000);
   }
 
   getQueue(): void {
@@ -59,33 +63,37 @@ export class HomeComponent implements OnInit {
 
     this.httpClient.post(this.baseUrl + 'queue/add', model).subscribe(result => {
       this.queueItems = result;
+      this.challengeIndex = -1; // TODO: not this
 
       this.getQueue();
+      this.getUser();
 
       // set challenges refresh rate
-      //this.challengeRefresh = setInterval(() => {
-      //  this.refreshChallenges();
-      //}, 500);
+      this.challengeRefresh = setInterval(() => {
+        this.refreshChallenges();
+      }, 500);
     }, error => console.error(error));
   }
 
   deleteQueueItem(id: number): void {
     this.httpClient.get(this.baseUrl + 'queue/remove/' + id).subscribe(result => {
-      console.log(result);
-
       this.getQueue();
+      this.getUser();
     }, error => console.error(error));
   }
 
   challenge(id: number): void {
+    this.challengeIndex = id;
+
     this.httpClient.get(this.baseUrl + 'challenge/add/' + id).subscribe(result => {
       this.outgoingChallenge = result['challenge'];
+      this.getUser();
 
       // faster refresh rate to check for challenge accept
-      //clearInterval(this.challengeRefresh);
-      //this.challengeRefresh = setInterval(() => {
-      //  this.refreshChallenges();
-      //}, 100);
+      clearInterval(this.challengeRefresh);
+      this.challengeRefresh = setInterval(() => {
+        this.refreshChallenges();
+      }, 100);
     }, error => console.error(error));
   }
 
@@ -107,5 +115,15 @@ export class HomeComponent implements OnInit {
     this.httpClient.get(this.baseUrl + 'challenge/accept/' + this.incomingChallenge.id).subscribe(result => {
       this.coinResult = result['challenge'].result;
     }, error => console.error(error));
+  }
+
+  rejectChallenge(): void {
+    this.httpClient.get(this.baseUrl + 'challenge/reject/' + this.incomingChallenge.id).subscribe(result => {
+      this.challengeIndex = null;
+    }, error => console.error(error));
+  }
+
+  handleResult(result: number, isChallenger: boolean): void {
+    this.challengeIndex = null;
   }
 }
